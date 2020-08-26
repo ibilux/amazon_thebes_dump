@@ -1,0 +1,8 @@
+# key mapping for iPhone4 headset
+key 226 HEADSETHOOK WAKE
+
+# key mapping for Samsung headset
+key 260 HEADSETHOOK WAKE
+key 259 VOLUME_UP   WAKE
+key 261 VOLUME_DOWN WAKE
+

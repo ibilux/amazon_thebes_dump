@@ -1,0 +1,71 @@
+# Copyright (C) 2012 The Android Open Source Project
+#
+# IMPORTANT: Do not create world writable files or directories.
+# This is a common source of Android security bugs.
+#
+
+on charger
+    setprop debug.mdump 1
+    write /sys/devices/system/cpu/cpu2/online 0
+    write /sys/devices/system/cpu/cpu3/online 0
+
+    write /proc/bootprof "INIT:eMMC:Mount_START"
+    mount_all /fstab.mt8135
+    mount ext4 /dev/block/platform/mtk-msdc.0/by-name/system /system noatime ro wait
+    write /proc/bootprof "INIT:eMMC:Mount_END"
+
+# Set this property so surfaceflinger is not started by system_init
+    setprop system_init.startsurfaceflinger 0
+    setprop sys.ipo.tbl 1
+    start kpoc_charger
+    start console
+    start nvram_daemon
+    start bat_logging
+    start hotplug
+
+on property:vold.decrypt=trigger_default_encryption
+    write /proc/bootprof "INIT:start vold"
+    start vold
+    start defaultcrypto
+
+on property:vold.decrypt=trigger_restart_framework
+    write /proc/bootprof "INIT:encrypted data mounted"
+    start dump-ramdump
+
+on property:vold.decrypt=trigger_restart_min_framework
+    write /proc/bootprof "INIT:input PIN"
+    start checkpw
+
+on property:ro.crypto.fs_crypto_blkdev=*
+    write /proc/bootprof "INIT:PIN OK"
+    start crypt_restart
+
+on nonencrypted
+    start dump-ramdump
+
+service crypt_restart /system/bin/vdc --wait cryptfs restart
+    disabled
+    oneshot
+
+service checkpw /system/bin/input_pw.sh
+    disabled
+    oneshot
+
+service kpoc_charger /system/bin/kpoc_charger
+    user root
+    group root
+    class charger
+
+#monitor battery status
+service bat_logging /system/bin/battery_lifetime_data
+    class main
+    user root
+    group root
+
+#ramdump handling service
+service dump-ramdump /system/bin/dump-ramdump.sh
+    class late_start
+    user root
+    group root
+    disabled
+    oneshot

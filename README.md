@@ -1,0 +1,13 @@
+# full_thebes-user 5.1.1 LVY48F 32.6.2.6_user_626533320 release-keys
+- manufacturer: amazon
+- platform: mt8135
+- codename: thebes
+- flavor: full_thebes-user
+- release: 5.1.1
+- id: LVY48F
+- incremental: 32.6.2.6_user_626533320
+- tags: release-keys
+- fingerprint: Amazon/full_thebes/thebes:5.1.1/LVY48F/32.6.2.6_user_626533320:user/release-keys
+- brand: Amazon
+- branch: full_thebes-user-5.1.1-LVY48F-32.6.2.6_user_626533320-release-keys
+- repo: amazon_thebes_dump
